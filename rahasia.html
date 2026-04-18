@@ -5,29 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diary Rahasia Alvin & Ima</title>
     <style>
-        body { font-family: sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: auto; }
         header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
         .form-box { background: #1e1e1e; padding: 20px; border-radius: 12px; border: 1px solid #d4af37; margin-bottom: 30px; }
         input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #333; background: #2c2c2c; color: white; box-sizing: border-box; }
-        #btnSimpan { width: 100%; background: #d4af37; color: black; border: none; padding: 12px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 8px; }
-        #btnLogout { background: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+        button { cursor: pointer; border-radius: 8px; font-weight: bold; transition: 0.3s; }
+        #btnSimpan { width: 100%; background: #d4af37; color: black; border: none; padding: 12px; font-size: 16px; }
+        #btnLogout { background: #ff4d4d; color: white; border: none; padding: 8px 15px; }
         .card { background: #1e1e1e; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #d4af37; }
         .card h4 { margin: 0; color: #d4af37; }
-        .card p { margin: 10px 0 0; line-height: 1.5; }
+        .card small { color: #888; display: block; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h3>📓 Our Diary</h3>
+        <h2>📓 Our Diary</h2>
         <button id="btnLogout">Logout</button>
     </header>
 
     <div class="form-box">
+        <h4>Tulis Kenangan Baru ✍️</h4>
         <input type="text" id="judul" placeholder="Judul momen...">
-        <textarea id="cerita" rows="4" placeholder="Tulis ceritanya, Vin..."></textarea>
+        <textarea id="cerita" rows="4" placeholder="Tulis detailnya di sini, Vin..."></textarea>
         <button id="btnSimpan">Simpan ke Memory</button>
     </div>
 
@@ -52,20 +54,25 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // SATPAM: Tunggu status login stabil
+    // --- BAGIAN SATPAM (UPDATE DI SINI) ---
     onAuthStateChanged(auth, (user) => {
-        if (!user) {
-            // Kalau fix nggak login, baru pindahin
-            window.location.replace("index.html");
-        } else {
+        if (user) {
+            // Kalau user ada, langsung load data
             loadDiary();
+        } else {
+            // Kasih jeda 1.5 detik pas refresh buat mastiin beneran gak ada user
+            setTimeout(() => {
+                if (!auth.currentUser) {
+                    window.location.replace("index.html");
+                }
+            }, 1500);
         }
     });
 
     window.simpanDiary = async () => {
         const judul = document.getElementById('judul').value;
         const cerita = document.getElementById('cerita').value;
-        if (!judul || !cerita) return alert("Isi dulu, Vin!");
+        if (!judul || !cerita) return alert("Isi lengkap dulu, Vin!");
 
         try {
             await addDoc(collection(db, "diary_alvin"), {
@@ -75,6 +82,7 @@
             });
             document.getElementById('judul').value = "";
             document.getElementById('cerita').value = "";
+            alert("Berhasil disimpan!");
         } catch (e) {
             alert("Gagal: " + e.message);
         }
@@ -88,12 +96,13 @@
             listDiv.innerHTML = "";
             snapshot.forEach((doc) => {
                 const data = doc.data();
+                const waktu = data.waktu ? data.waktu.toDate().toLocaleDateString('id-ID') : 'Baru saja';
                 listDiv.innerHTML += `
                     <div class="card">
                         <h4>${data.judul}</h4>
+                        <small>📅 ${waktu}</small>
                         <p>${data.cerita}</p>
-                    </div>
-                `;
+                    </div>`;
             });
         });
     }
