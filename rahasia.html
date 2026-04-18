@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Halaman Rahasia</title>
+</head>
+<body style="background: #f0f0f0; text-align: center; padding-top: 50px;">
+
+    <h1>🔓 Area Terbatas</h1>
+    <p>Selamat datang, Alvin! Ini adalah halaman yang cuma bisa dilihat kalau sudah login.</p>
+    
+    <button id="btnLogout" style="padding: 10px; background: red; color: white; border: none; cursor: pointer;">Log Out</button>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        // PASTE FIREBASE CONFIG YANG SAMA DI SINI
+        apiKey: "AIzaSyDPbK3U6Yoe8qNINXCwrX5WOMyGgfHqwiU",
+        authDomain: "wedding-alvin-ima.firebaseapp.com",
+        projectId: "wedding-alvin-ima",
+        appId: "1:1026738748582:web:eeb9029dbe1987cfdd4867"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // SATPAM: Cek apakah user sudah login
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            alert("Eits! Login dulu bro.");
+            window.location.href = "login.html"; // Tendang ke luar
+        }
+    });
+
+    // Tombol Logout
+    document.getElementById('btnLogout').onclick = () => {
+        signOut(auth).then(() => window.location.href = "login.html");
+    };
+</script>
+</body>
+</html>
