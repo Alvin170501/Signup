@@ -22,9 +22,11 @@
 </div>
 
 <script type="module">
+    // 1. IMPORT FIREBASE
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+    // 2. CONFIG (Data kamu)
     const firebaseConfig = {
         apiKey: "AIzaSyD0MWAd2w1Ed_woeyCpkctLJ5qQ_ioySiY",
         authDomain: "wedding-alvin-ima.firebaseapp.com",
@@ -32,20 +34,29 @@
         appId: "1:1026738748582:web:eeb9029dbe1987cfdd4867"
     };
 
+    // 3. INISIALISASI
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Proses Login saat diklik
+    // 4. PROSES LOGIN
     document.getElementById('btnLogin').onclick = () => {
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
-        
-        signInWithEmailAndPassword(auth, email, pass)
+
+        if(!email || !pass) return alert("Isi email dan password dulu, Vin!");
+
+        // Set supaya login nggak ilang pas refresh
+        setPersistence(auth, browserLocalPersistence)
             .then(() => {
-                // Gunakan replace agar tidak bisa di-back ke login
+                return signInWithEmailAndPassword(auth, email, pass);
+            })
+            .then(() => {
+                // Berhasil login, pindah ke rahasia
                 window.location.replace("rahasia.html");
             })
-            .catch(err => alert("Gagal Masuk: " + err.message));
+            .catch((error) => {
+                alert("Gagal Masuk: " + error.message);
+            });
     };
 </script>
 </body>
