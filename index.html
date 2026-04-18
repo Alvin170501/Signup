@@ -1,36 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login - Web Privat Alvin</title>
+    <title>Login - Memory Lane</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #121212; color: white; }
-        .login-box { background: #1e1e1e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
-        button { background: #d4af37; color: black; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #121212; color: white; margin: 0; }
+        .login-box { background: #1e1e1e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 85%; max-width: 350px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #2c2c2c; color: white; box-sizing: border-box; }
+        button { background: #d4af37; color: black; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        a { color: #888; text-decoration: none; font-size: 0.8em; display: block; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="login-box">
+<div class="login-box">
     <h2>Privat Area</h2>
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="pass" placeholder="Password">
     <button id="btnLogin">Masuk</button>
-
-    <p style="font-size: 0.8em; margin-top: 15px;">
-        Belum punya akun? <a href="daftar.html" style="color: #d4af37; text-decoration: none;">Daftar di sini</a>
-    </p>
+    <a href="daftar.html">Belum punya akun? Daftar</a>
 </div>
-
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    // PASTE FIREBASE CONFIG KAMU DI SINI
     const firebaseConfig = {
-        apiKey: "AIzaSyDPbK3U6Yoe8qNINXCwrX5WOMyGgfHqwiU",
+        apiKey: "AIzaSyD0MWAd2w1Ed_woeyCpkctLJ5qQ_ioySiY",
         authDomain: "wedding-alvin-ima.firebaseapp.com",
         projectId: "wedding-alvin-ima",
         appId: "1:1026738748582:web:eeb9029dbe1987cfdd4867"
@@ -39,19 +35,17 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Cek status login
-    onAuthStateChanged(auth, (user) => {
-        if (user) window.location.href = "rahasia.html";
-    });
-
-    // Proses Login
+    // Proses Login saat diklik
     document.getElementById('btnLogin').onclick = () => {
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
         
         signInWithEmailAndPassword(auth, email, pass)
-            .then(() => alert("Berhasil Masuk!"))
-            .catch(err => alert("Error: " + err.message));
+            .then(() => {
+                // Gunakan replace agar tidak bisa di-back ke login
+                window.location.replace("rahasia.html");
+            })
+            .catch(err => alert("Gagal Masuk: " + err.message));
     };
 </script>
 </body>
