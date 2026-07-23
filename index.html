@@ -145,7 +145,7 @@
     </div>
 
     <div class="footer-text">
-        "Hindari klerek plus dengan aplikasi aMax by alvian"
+        "Hindari klerek variant plus/mines dengan aplikasi aMax by alvian"
     </div>
 
 <script>
@@ -168,15 +168,13 @@
                     let Uints = new Uint8Array(e.target.result);
                     let db = new SQL.Database(Uints);
 
-                    // Query persis seperti request
+                    // Query diubah menggunakan user_id agar sesuai dengan NIK di nama file
                     let query = `
                         SELECT 
-    t.nik_trans AS NIK_Kasir,
-    m.nama AS Nama_Kasir,
-    SUM(t.cash - t.change_pay) AS Setoran
-FROM tx_tsale t
-LEFT JOIN master_user m ON t.nik_trans = m.nik
-GROUP BY t.nik_trans, m.nama;
+                            user_id as NIK_Kasir,
+                            SUM(cash - change_pay) as setoran
+                        FROM tx_tsale
+                        GROUP BY user_id;
                     `;
                     
                     let data = db.exec(query);
