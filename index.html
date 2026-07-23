@@ -171,9 +171,12 @@
                     // Query persis seperti request
                     let query = `
                         SELECT 
-                            nik_trans as NIK_Kasir,
-                            SUM(cash - change_pay) as setoran
-                        FROM tx_tsale;
+    t.nik_trans AS NIK_Kasir,
+    m.nama AS Nama_Kasir,
+    SUM(t.cash - t.change_pay) AS Setoran
+FROM tx_tsale t
+LEFT JOIN master_user m ON t.nik_trans = m.nik
+GROUP BY t.nik_trans, m.nama;
                     `;
                     
                     let data = db.exec(query);
