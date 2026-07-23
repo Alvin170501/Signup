@@ -95,6 +95,7 @@
             font-weight: 600;
             font-size: 14px;
             text-transform: uppercase;
+            white-space: nowrap;
         }
         td {
             font-size: 15px;
@@ -105,6 +106,7 @@
         }
         #hasil { 
             margin-top: 25px; 
+            overflow-x: auto;
         }
         .footer-text {
             margin-top: 40px;
@@ -168,13 +170,14 @@
                     let Uints = new Uint8Array(e.target.result);
                     let db = new SQL.Database(Uints);
 
-                    // Query diubah menggunakan user_id agar sesuai dengan NIK di nama file
+                    // Query diubah untuk menampilkan Tanggal, NIK Kasir, dan Setoran
                     let query = `
                         SELECT 
+                            date_tx as Tanggal,
                             user_id as NIK_Kasir,
                             SUM(cash - change_pay) as setoran
                         FROM tx_tsale
-                        GROUP BY user_id;
+                        GROUP BY date_tx, user_id;
                     `;
                     
                     let data = db.exec(query);
@@ -194,7 +197,8 @@
                     baris.forEach(b => {
                         htmlTabel += "<tr>";
                         b.forEach((isi, index) => { 
-                            if (index === 1 && typeof isi === 'number') {
+                            // Index 2 karena Setoran sekarang ada di kolom ke-3 (Tanggal, NIK_Kasir, setoran)
+                            if (index === 2 && typeof isi === 'number') {
                                 htmlTabel += `<td style="font-weight:600; color:#38a169;">Rp ${isi.toLocaleString('id-ID')}</td>`;
                             } else {
                                 htmlTabel += `<td>${isi !== null ? isi : '-'}</td>`; 
